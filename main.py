@@ -11,8 +11,8 @@ class Entity:
 
     def update(self, thrust):
         self.accel = -9.81 + thrust / self.mass
-        self.velocity += self.accel
-        self.y += self.velocity
+        self.velocity += self.accel * dt
+        self.y += self.velocity * dt
 
 # PID controller
 class PID:
@@ -39,16 +39,19 @@ class PID:
         # calculate output
         out = self.kp*self.proportional + self.kd*self.derivative + self.ki*self.integral
 
+        if out > 20:
+            out = 20
+
         self.prev_error = error
         return out
 
-dt = 1
+dt = 0.1
 timer = 0
 rocket = Entity(1, 0)
 
 # Tuned using the ziegler-nichols method
-ku = 2.02
-tu = 4
+ku = 10
+tu = 4.7
 pid = PID(0.6*ku, 0.075*ku*tu, 1.2*ku/tu, 10)
 
 positions = []
